@@ -14,8 +14,6 @@ class MovieItem extends React.Component {
   routeToMovie(id) {
   }
   render() {
-    console.log('MovieItem component');
-    // console.log(Link);
 
     return (
       <div className="list-item">

@@ -35,15 +35,32 @@ class Home extends React.Component {
             this.props.history.push(
                 {
                     pathname: `/pagination`,
-                    search: `s=${term}&page=${1}`,
+                    search: `s=${term}&page=${this.getPage()}`,
                 }
             );
         })
     }
 
+    getPage() {
+        const elemnt = this.props.history.location.search;
+        if (elemnt.indexOf('&page=') !== -1) {
+            const pageNumber = elemnt.substring(elemnt.indexOf('&page=') + 6);
+            if (!isNaN(pageNumber)) {
+                return pageNumber;
+            }
+        }
+        return 1;
+    }
     render() {
         const movieSearch = _.debounce((term) => this.movieSearch(term), 300);
+        this.getPage();
+        let list = [];
+        if (this.state.movies) {
+            list = this.state.movies.map((movie) =>
+                <MovieItem key={movie.imdbID} title={movie.Title} year={movie.Year} imdbID={movie.imdbID} poster={movie.Poster}></MovieItem>
+            );
 
+        }
         return (
             <div className="list-item">
                 <header className="App-header">
@@ -53,7 +70,15 @@ class Home extends React.Component {
                 <Search onSearchTermChange={movieSearch} suggestList={this.state.movies}
                     onSearchTermSelect={(item) => this.setState({ movies: [item] })} ></Search>
 
-                <Route path="/pagination" render={routeProps => <PaginatedList {...routeProps} list={this.state.movies} listItem={MovieItem} />} />
+                <Route path="/pagination" render={routeProps =>
+                    <PaginatedList {...routeProps}
+                        list={this.state.movies}
+                        listItem={MovieItem}
+                        currentPage={this.getPage()}
+                        term={this.state.term}
+                        totalResults={this.state.totalResults}
+                        pageSize={5}
+                    />} />
             </div>
         );
     }

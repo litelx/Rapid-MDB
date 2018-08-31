@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import './PaginatedList.css';
 
 class PaginatedList extends React.Component {
   constructor(props) {
@@ -9,34 +10,81 @@ class PaginatedList extends React.Component {
       pageSize: this.props.pageSize || 5, // number of items in page
       term: this.props.term,
       totalResults: this.props.totalResults || 0,
-      listItem: this.props.listItem || null, // item list component
       currentPage: this.props.currentPage || 1,
-      list: this.props.list || [], // list to add to pages map
-
-
+      updatedResults: this.props.updatedResults, // object{ startresult: list}
     };
   }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.currentPage !== this.props.currentPage) {
-      this.setState({ currentPage: nextProps.currentPage });
+  componentWillMount() {
+    if (this.props.updatedResults['resultsFrom']) {
+      this.updateStatePages(this.props.updatedResults['resultsFrom'], this.props.updatedResults['moviesListItems']);
     }
   }
-  getPreviousePage() {
+  componentWillReceiveProps(updatedProps) {
+    if (updatedProps.currentPage !== this.props.currentPage) {
+      this.setState({ currentPage: updatedProps.currentPage });
+    }
+    if (updatedProps.term !== this.props.term) {
+      this.setState({ term: updatedProps.term });
+      this.setState({ totalResults: updatedProps.totalResults });
+      this.setState({ currentPage: updatedProps.currentPage });
+      this.setState({ updatedResults: updatedProps.updatedResults });
+      this.setState({ pages: {} });
+    }
 
-    let newPage = Number(this.state.currentPage);
+    if (updatedProps.updatedResults['resultsFrom'] !== this.props.updatedResults['resultsFrom']) {
+      this.setState({ updatedResults: updatedProps.updatedResults });
+    }
+    if (!this.state.pages[updatedProps.currentPage] && updatedProps.updatedResults['resultsFrom']) {
+      this.updateStatePages(updatedProps.updatedResults['resultsFrom'], updatedProps.updatedResults['moviesListItems']);
+    }
+  }
+  updateStatePages(startResults, list) {
+    let pages = { ...this.state.pages };
+    const pagesCount = list.length / this.state.pageSize;
+
+    for (let i = 0; i < pagesCount; i++) {
+
+      let pageNumber = (startResults + (this.state.pageSize - 1)) / this.state.pageSize;
+      let pageResults = list.slice(i * this.state.pageSize, (i + 1) * this.state.pageSize);
+      let element = {};
+      element[pageNumber] = [...pageResults];
+      Object.assign(pages, element);
+
+      startResults = startResults + this.state.pageSize;
+    }
+
+    this.setState({
+      pages:
+        pages
+    });
+
+  }
+  getPreviousePage(currentPage) {
+    let newPage = Number(currentPage);
     if (newPage !== 1) {
       newPage -= 1;
     }
+
+    if (!this.state.pages[newPage]) {
+      console.log('needs to call new pages');
+      // this.props.onSearchLinkChange(newPage);
+    }
+
     return {
       pathname: `/pagination`,
       search: `s=${this.state.term}&page=${newPage}`,
     }
   }
-  getNextPage() {
-    let newPage = Number(this.state.currentPage);
-    if (newPage < (this.state.totalResults / this.state.pageSize))
+  getNextPage(currentPage) {
+    let newPage = Number(currentPage);
+    if (newPage < (this.state.totalResults / this.state.pageSize)) {
       newPage += 1;
+    }
+
+    if (!this.state.pages[newPage]) {
+      this.props.onSearchLinkChange(newPage);
+    }
+
     return {
       pathname: `/pagination`,
       search: `s=${this.state.term}&page=${newPage}`,
@@ -44,34 +92,27 @@ class PaginatedList extends React.Component {
   }
   render() {
 
-    let list = [];
-    list = (this.props.list.map((movie) =>
-      <this.state.listItem key={movie.imdbID} title={movie.Title} year={movie.Year} imdbID={movie.imdbID} poster={movie.Poster}></this.state.listItem>
-    )).slice(0, 5);
-    if (this.state.currentPage === this.state.maxPage) {
-      console.log(this.state.resultsTo, this.state.totalResults)
-      this.setState({ resultsTo: this.state.totalResults });
-    }
 
     return (
       <div className="PaginatedList">
-        {/* {this.props.list} */}
-        {list}
-        <label>PaginatedList Movie:</label>
-        <br />
-        {this.props.pageSize}
-        <br />
-        <br />
-        Showing movies results: {this.state.resultsFrom} - {this.state.resultsTo} out of {this.state.totalResults}
-        <br />
-        <br />
+        {this.state.pages[this.state.currentPage]}
 
-        <Link to={this.getPreviousePage()}>previouse page</Link>
-        <div>current page: {this.state.currentPage}</div>
-        <Link to={this.getNextPage()}>next page</Link>
+        <div className="page-details">
 
-        <br />
-        Total pages: {this.state.maxPages}
+          <label>PaginatedList Movie:</label>
+          <br />
+          <br />
+          Showing movies results: {this.state.resultsFrom} - {this.state.resultsTo} out of {this.state.totalResults}
+          <br />
+          <br />
+
+          <Link to={this.getPreviousePage(this.state.currentPage)}>previouse page</Link>
+          <div>current page: {this.state.currentPage}</div>
+          <Link to={this.getNextPage(this.state.currentPage)}>next page</Link>
+
+          <br />
+          Total pages: {this.state.maxPages}
+        </div>
       </div>
     )
   }

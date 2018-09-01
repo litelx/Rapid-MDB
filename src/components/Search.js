@@ -10,7 +10,12 @@ class Search extends React.Component {
       suggestList: this.props.suggestList || []
     };
   }
+  onInputChange(term) {
+    this.setState({ term });
+    this.props.onSearchTermChange(term);
+  }
   render() {
+
     return (
 
       <div className="search">
@@ -26,19 +31,10 @@ class Search extends React.Component {
           }
           value={this.state.term || ''}
           onChange={event => this.onInputChange(event.target.value)}
-          onSelect={(term, val) => this.onInputSelect(term, val)}
+          onSelect={(term) => this.onInputChange(term)}
         />
       </div>
     )
-  }
-  onInputChange(term) {
-    this.setState({ term });
-    this.props.onSearchTermChange(term);
-  }
-  onInputSelect(term, val) {
-    this.setState({ term });
-    this.props.onSearchTermSelect(val);
-
   }
 }
 

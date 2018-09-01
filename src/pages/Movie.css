@@ -1,0 +1,18 @@
+.movie {
+  color: bisque;
+  display: flex;
+  justify-content: space-between;
+}
+.movie-img {
+  width: 25%;
+  margin: 20px;
+}
+
+.movie-details {
+  width: 70%;
+  margin: 20px;
+}
+
+.detail-title {
+  font-weight: 700;
+}

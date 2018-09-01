@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import './MovieItem.css';
 
 class MovieItem extends React.Component {
   constructor(props) {
@@ -11,16 +12,17 @@ class MovieItem extends React.Component {
       poster: ''
     };
   }
-  routeToMovie(id) {
-  }
   render() {
-
     return (
-      <div className="list-item">
-        <img className="poster" src={this.props.poster} alt={this.props.title} />
-        <h1>{this.props.title}</h1>
-        <h1>{this.props.year}</h1>
-        <Link to={`${this.props.imdbID}`} >{this.props.imdbID}</Link>
+      <div className="movie-item">
+        <div className="poster-img">
+          <Link to={`${this.props.imdbID}`} ><img className="poster" src={this.props.poster} alt={this.props.title} /></Link>
+        </div>
+        <div className="details">
+          <h2>Movie Title: </h2>
+            <h1><span className="text-style">{this.props.title}</span></h1>
+          <h3>Year: <span className="text-style">{this.props.year}</span></h3>
+        </div>
       </div>
     );
   }

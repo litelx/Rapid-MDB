@@ -1,0 +1,19 @@
+.page-details {
+  text-align: center;
+}
+
+.PaginatedList {
+  background-color: #282c34;
+  
+}
+.page-details {
+  color: #fafafa;
+  
+}
+a {
+  color: #fafafa;
+  
+}
+.currentPage {
+  padding: 3px 15px;
+}

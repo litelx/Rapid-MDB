@@ -6,6 +6,7 @@ import PaginatedList from "../components/PaginatedList";
 import { Route } from "react-router-dom";
 import { fetchingSearchData } from "../actions/fetchingData";
 import MovieItem from "../components/MovieItem";
+import gitImg from "../assets/img/github.png"
 
 class Home extends React.Component {
   constructor(props) {
@@ -103,10 +104,8 @@ class Home extends React.Component {
       <div className="list-item">
         <header className="App-header">
           <div className="tooltip">
-            <a href="https://github.com/litelx/Rapid-MDB" target="_blank">
-              <img className="git" src="https://www.appnovation.com/sites/default/files/2016-12/github.png"
-                alt="Git"
-              />
+            <a href="https://github.com/litelx/Rapid-MDB" target="_blank" rel="noopener noreferrer">
+              <img src={gitImg} alt="Git" />
             </a>
             <span className="tooltiptext">Link to repository on GitHub</span>
           </div>

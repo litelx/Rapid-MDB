@@ -63,7 +63,7 @@ class Movie extends React.Component {
             <h1>No results</h1>
           </div>
         ) : (
-          <div>
+          <div className="movie">
             <div className="movie-img">
               <img src={this.state.movieImage} alt={this.state.movieTitle} />
             </div>
